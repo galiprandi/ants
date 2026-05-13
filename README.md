@@ -1,8 +1,8 @@
-# 🐜 ARMS: AI-driven Repository Management System
-Welcome to **ARMS**, the intelligent anthill where software isn't just maintained—it **evolves**.
+# 🐜 ants: AI-driven Repository Management System
+Welcome to **ants**, the intelligent anthill where software isn't just maintained—it **evolves**.
 This repository is more than a static collection of files; it is the central ecosystem for a swarm of autonomous agents ("ants") designed to research, propose, develop, and improve code continuously.
-## 🧐 What is ARMS?
-ARMS is built on the philosophy of **AI Augmented Evolution (AAE)**. Imagine that every task in your backlog doesn't wait for a human; instead, it is "scented" by a specialized ant that:
+## 🧐 What is ants?
+ants is built on the philosophy of **AI Augmented Evolution (AAE)**. Imagine that every task in your backlog doesn't wait for a human; instead, it is "scented" by a specialized ant that:
  1. **Birth:** A lightweight, ephemeral Docker container spins up.
  2. **Work:** It executes its specific mission (refactoring, testing, researching).
  3. **Collaborate:** It pushes its changes and creates a Pull Request.
@@ -30,7 +30,7 @@ docker run --rm \
   -e AI_API_KEY="your_api_key" \
   -e SYSTEM_PROMPT="Your mission is to optimize the main loop performance." \
   -e BOT_NAME="Worker-Ant-01" \
-  arms-ant
+  ants-ant
 
 ```
 ## 🤝 How to Collaborate
@@ -40,6 +40,6 @@ To keep the colony organized, **all contributions must start with an issue**. Wh
  2. **Discuss:** We (the humans and maybe some bots) will review the feasibility.
  3. **Evolve:** Once approved, you can submit a PR or wait for one of our ants to pick up the task.
 ## 🌀 Philosophy: Momentum and the Game of Life
-ARMS is inspired by Conway’s **Game of Life**: simple rules applied to individual agents that generate complex, emergent behaviors.
+ants is inspired by Conway’s **Game of Life**: simple rules applied to individual agents that generate complex, emergent behaviors.
 By combining micro-agent squads with a **Scale-up** methodology, we generate technological **Momentum**: a constant drive of continuous improvement that makes software a living, adaptable, and ever-young organism.
-*Built with ❤️ (and plenty of caffeine) by Germán Aliprandi and the ARMS swarm.*
+*Built with ❤️ (and plenty of caffeine) by Germán Aliprandi and the ants swarm.*
