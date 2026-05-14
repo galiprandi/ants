@@ -1,45 +1,52 @@
 #!/bin/bash
-set -e
+ANT_NAME=$1
+
+if [ -z "$ANT_NAME" ]; then
+    echo "Error: ANT_NAME parameter is required"
+    echo "Usage: $0 <ant-name>"
+    exit 1
+fi
+
+# Load .env file
+if [ -f .env ]; then
+    set -a
+    source .env
+    set +a
+fi
+
+# Load brain.md as prompt if PROMPT not set
+if [ -z "$PROMPT" ] && [ -f .ants/$ANT_NAME/brain.md ]; then
+    PROMPT=$(cat .ants/$ANT_NAME/brain.md)
+fi
+
+echo "[ants] Starting ${ANT_NAME}..."
+
+# Create temp directory if it doesn't exist
+mkdir -p /tmp/ants
+
+# Create a mktemp directory for the ant
+ANT_DIR=$(mktemp -d /tmp/ants/ant-XXXXXXXX)
+echo "[ants] Working in $ANT_DIR"
 
 # Configure agent identity
-git config --global user.name "${BOT_NAME:-"🐜 Anonymous Ant"}"
+git config --global user.name "${ANT_NAME:-"🐜 Anonymous Ant"}"
 git config --global user.email "${BOT_EMAIL:-"ant@arms.dev"}"
-git config --global --add safe.directory /workspace/repo
+git config --global --add safe.directory /workspace/anthill
 
-echo "[ants] Starting 🐜 ${BOT_NAME}..."
 
-# 1. Clone target repository
-git clone "https://${GITHUB_TOKEN}@${REPO_URL#https://}" repo
-cd repo
+# Configure git credentials for push (gh cli and opencode detect GITHUB_TOKEN automatically)
+export GITHUB_TOKEN="$GITHUB_TOKEN"
+git config --global credential.helper '!f() { echo "username=x-access-token"; echo "password=${GITHUB_TOKEN}"; }; f'
 
-# 2. Sync (Ritual of initiation)
-git fetch origin
+# Clone repository
+rm -rf $ANT_DIR/ants
+git clone https://github.com/galiprandi/ants.git $ANT_DIR
 
-# 3. Use SYSTEM_PROMPT directly (already concatenated from wake.sh)
-FULL_PROMPT="$SYSTEM_PROMPT"
+# Work in mounted repository
+cd $ANT_DIR
 
-# 4. Execute OpenCode
-export AI_API_KEY="$AI_API_KEY"
-export AI_PROVIDER="${AI_PROVIDER:-anthropic}"
-export AI_MODEL="${AI_MODEL:-claude-3.5-sonnet}"
+echo "$PROMPT"
 
-opencode \
-    --prompt "$FULL_PROMPT" \
-    --auto-commit \
-    --max-iterations "${MAX_ITERATIONS:-15}" \
-    --working-dir .
+echo "[ants] Awakening complete!"
 
-# 5. Push and Pull Request (Carol chooses branch during work)
-if [ -n "$(git status --porcelain)" ]; then
-    echo "[ants] Changes detected, pushing to origin..."
-    CURRENT_BRANCH=$(git branch --show-current)
-    git push -u origin "$CURRENT_BRANCH"
-
-    export GH_TOKEN="$GITHUB_TOKEN"
-    gh pr create \
-        --title "ants-evolution: ${CURRENT_BRANCH}" \
-        --body "Automated evolution by **${BOT_NAME}**.\n\n> $SYSTEM_PROMPT" \
-        --head "$CURRENT_BRANCH" || echo "PR already exists."
-else
-    echo "[ants] No changes were made by the agent."
-fi
+opencode run "$PROMPT" -m "$MODEL" --dir .

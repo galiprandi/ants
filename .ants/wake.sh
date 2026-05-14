@@ -44,8 +44,13 @@ echo ""
 
 # Check required environment variables
 if [ -z "$GITHUB_TOKEN" ]; then
-    echo "⚠️  Warning: GITHUB_TOKEN is not configured"
+    echo "❌ Error: GITHUB_TOKEN is not configured"
+    echo "Please export GITHUB_TOKEN in your shell environment"
+    echo "Example: export GITHUB_TOKEN=ghp_xxxxxxxxxxxx"
+    exit 1
 fi
+
+echo "🔑 GITHUB_TOKEN is configured (length: ${#GITHUB_TOKEN})"
 
 if [ -z "$AI_API_KEY" ]; then
     echo "⚠️  Warning: AI_API_KEY is not configured"
@@ -57,6 +62,7 @@ fi
 
 # Launch container
 docker run --rm \
+  -v "$(pwd):/workspace/repo" \
   -e GITHUB_TOKEN="${GITHUB_TOKEN}" \
   -e REPO_URL="${REPO_URL}" \
   -e AI_API_KEY="${AI_API_KEY}" \
@@ -64,4 +70,4 @@ docker run --rm \
   -e AI_MODEL="${AI_MODEL}" \
   -e SYSTEM_PROMPT="$SYSTEM_PROMPT" \
   -e BOT_NAME="$ANT_NAME" \
-  ants
+  ants-ant
